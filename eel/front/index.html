@@ -5,15 +5,38 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <link href="/external/bootstrap-5.3.2-dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="index.css" rel="stylesheet">
         <title>MiniScan</title>
     </head>
     <body>
+
         <div class="container-fluid">
             <div class="row justify-content-center">
-                <div class="col-2 text-center" style="min-height: 100vh; background-color: #1B174E">
+                <div class="col-2 text-center sidebar">
                     <img src="icons/mini_scan_logo.png" style="width: 90%; margin: 2%">
+                    <div class="navbar">
+                        <div class="highlight">
+                            <img id="scan_icon" src="icons/scan_icon.svg" style="float: left;"/>
+                            <button class="tablinks" onclick="openTab(event, 'tab1')">Scan</button>
+                        </div>
+                        <div class="highlight">
+                            <button class="tablinks" onclick="openTab(event, 'tab2')">Placeholder 1</button>
+                        </div>
+                        <div class="highlight">
+                            <button class="tablinks" onclick="openTab(event, 'tab3')">Placeholder 2</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-2" style="min-height: 100vh; background-color: #242057;">
+                <div class="col-2 sidebar" style="min-height: 100vh; background-color: #242057;">
+                    <div id="tab1" class="tabcontent">
+                        <p>Content for Tab 1</p>
+                    </div>
+                    <div id="tab2" class="tabcontent">
+                        <p>Content for Tab 2</p>
+                    </div>
+                    <div id="tab3" class="tabcontent">
+                        <p>Content for Tab 3</p>
+                    </div>
                 </div>
                 <div class="col-8" style="min-height: 100vh; background-color: #242057;">
                 </div>
@@ -21,7 +44,7 @@
         </div>
 
         <script type="text/javascript" src="/eel.js"></script>
-        <script src="index.js"></script>
+        <script src="main.js"></script>
         <script src="external/bootstrap-5.3.2-dist/js/bootstrap.min.js"></script>
     </body>
 </html>
