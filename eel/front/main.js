@@ -38,3 +38,20 @@ function openTab(evt, tabName) {
     }
 
 }
+
+var scan_icon = document.getElementById("scan_icon");
+    
+scan_icon.addEventListener("click", function() {
+    // treat the icon and the button as the same selection
+    var buttons = document.querySelectorAll("button");
+    var button;
+
+    for (var i = 0; i < buttons.length; i++) {
+        if (buttons[i].textContent === "Scan") {
+            button = buttons[i];
+        }
+    }
+
+    button.click();
+});
+
