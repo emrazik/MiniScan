@@ -29,7 +29,30 @@
                 </div>
                 <div class="col-2 sidebar" style="min-height: 100vh; background-color: #242057;">
                     <div id="tab1" class="tabcontent" style="min-height: 100vh; background-color: #1B174E">
-                        <p>Content for Tab 1</p>
+                        <form>
+                            <div class="form-group">
+                                <label for="label" style="margin-top: 1em;">Label</label>
+                                <input type="text" class="form-control" id="name">
+                            </div>
+                            <div class="form-group">
+                                <label for="ip">IP Address</label>
+                                <input type="text" class="form-control" id="ip">
+                            </div>
+                            <div class="form-group">
+                                <label for="port-range-low">Port Range</label>
+                                <input type="number" id="port-range-low" min="1">
+                                <input type="number" id="port-range-high" min="1">
+                            </div>
+
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <label class="form-check-label" for="OS">Operating System</label>
+                                    <input class="form-check-input" type="checkbox" id="OS" name="OS">
+                                    <label class="form-check-label" for="port-footprint">Port Footprint</label>
+                                    <input class="form-check-input" type="checkbox" id="port-footprint" name="port-footprint">
+                                </div>
+                            </div>
+                        </form>
                     </div>
                     <div id="tab2" class="tabcontent">
                         <p>Content for Tab 2</p>
