@@ -1,3 +1,7 @@
+body, html {
+    overflow: hidden;
+}
+
 .navbar {
     width: 100%;
     background-color: #1B174E;
@@ -54,6 +58,11 @@ label {
 
 #port-range-high {
     display: inline;
+}
+
+.scrollable-column {
+    height: 100vh;
+    overflow-y: auto;
 }
 
 

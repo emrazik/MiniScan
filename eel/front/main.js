@@ -40,7 +40,6 @@ function openTab(evt, tabName) {
 }
 
 var scan_icon = document.getElementById("scan_icon");
-    
 scan_icon.addEventListener("click", function() {
     // treat the icon and the button as the same selection
     var buttons = document.querySelectorAll("button");
@@ -51,7 +50,33 @@ scan_icon.addEventListener("click", function() {
             button = buttons[i];
         }
     }
-
     button.click();
 });
 
+
+function scanSubmit() {
+    var card = document.createElement('div');
+    card.className = 'card';
+    
+    var ch = document.createElement('div');
+    ch.textContent = 'Label';
+    ch.className = 'card-header';
+
+    var cb = document.createElement('div');
+    cb.textContent = 'test';
+    cb.className = 'card-body';
+
+    var OS = document.createElement('object');
+    OS.data = '/icons/scan_icon.svg';
+
+    OS.type = 'image/svg+xml';
+    OS.width = '200'; 
+    OS.height = '200'; 
+
+    card.appendChild(ch);
+    card.appendChild(cb);
+    ch.appendChild(OS);
+    
+    var cardContainer = document.getElementById('card-container');
+    cardContainer.appendChild(card);
+}
