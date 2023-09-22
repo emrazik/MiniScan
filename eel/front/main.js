@@ -1,3 +1,8 @@
+async function run_check_ports_open(host, ports) {
+    let portOpenList = await eel.tcp_check_ports_open_default(host, ports)();
+    return portOpenList;
+}
+
 function openTab(evt, tabName) {
     var i, tabcontent, tablinks;
 
@@ -54,29 +59,57 @@ scan_icon.addEventListener("click", function() {
 });
 
 
-function scanSubmit() {
+function scanSubmit(label, ipAddress, portLow, portHigh, OS, portFootprint, portOpenList) {
     var card = document.createElement('div');
     card.className = 'card';
     
     var ch = document.createElement('div');
-    ch.textContent = 'Label';
+    ch.textContent = label + " --- " + ipAddress;
     ch.className = 'card-header';
 
     var cb = document.createElement('div');
-    cb.textContent = 'test';
+    cb.textContent = 'Open Ports:';
     cb.className = 'card-body';
 
-    var OS = document.createElement('object');
-    OS.data = '/icons/scan_icon.svg';
+    var ol = document.createElement('ul');
 
-    OS.type = 'image/svg+xml';
-    OS.width = '200'; 
-    OS.height = '200'; 
+    portOpenList.forEach(port => {
+        const listItem = document.createElement('li');
+        listItem.textContent = port;
+        ol.appendChild(listItem);
+    });
+
+    //var OS = document.createElement('object');
+    //OS.data = '/icons/scan_icon.svg';
+
+    //OS.type = 'image/svg+xml';
+    //OS.width = '200'; 
+    //OS.height = '200'; 
 
     card.appendChild(ch);
     card.appendChild(cb);
-    ch.appendChild(OS);
+    cb.append(ol);
+    //ch.appendChild(OS);
     
     var cardContainer = document.getElementById('card-container');
     cardContainer.appendChild(card);
-}
+};
+
+function scanCollect() {
+    const label = document.getElementById("name").value;
+    const ipAddress = document.getElementById("ip").value;
+    const portLow = document.getElementById("port-range-low").value;
+    const portHigh = document.getElementById("port-range-high").value;
+    const OS = document.getElementById("OS").checked;
+    const portFootprint = document.getElementById("port-footprint").checked;
+
+    const portList = [];
+    for (let i = parseInt(portLow); i <= parseInt(portHigh); i++) {
+        portList.push(i);
+    }
+
+    const portPromise = run_check_ports_open(ipAddress, portList);
+    portPromise.then((value) => {
+        scanSubmit(label, ipAddress, portLow, portHigh, OS, portFootprint, value);
+    })
+};

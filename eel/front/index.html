@@ -31,7 +31,7 @@
                 </div>
                 <div class="col-2 sidebar">
                     <div id="tab1" class="tabcontent" style="min-height: 100vh; background-color: #1B174E">
-                        <form>
+                        <form id="my-form">
                             <div class="form-group">
                                 <label for="label" style="margin-top: 1em;">Label</label>
                                 <input type="text" class="form-control" id="name">
@@ -45,7 +45,6 @@
                                 <input type="number" id="port-range-low" min="1">
                                 <input type="number" id="port-range-high" min="1">
                             </div>
-
                             <div class="form-group">
                                 <div class="form-check">
                                     <label class="form-check-label" for="OS">Operating System</label>
@@ -55,7 +54,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <button type="button" class="btn btn-primary" onclick="scanSubmit()">Scan</button>
+                                <button type="button" class="btn btn-primary" onclick="scanCollect()">Scan</button>
                             </div>
                         </form>
                     </div>
