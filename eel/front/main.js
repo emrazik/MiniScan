@@ -1,3 +1,9 @@
+var scanIcon = document.getElementById("scan_icon");
+scanIcon.addEventListener('click', buttonClickHandler);
+
+var historyIcon = document.getElementById("history_icon");
+historyIcon.addEventListener('click', buttonClickHandler);
+
 async function run_check_ports_open(host, ports) {
     let portOpenList = await eel.tcp_check_ports_open_default(host, ports)();
     return portOpenList;
@@ -26,8 +32,12 @@ function openTab(evt, tabName) {
         tablinks[i].style.backgroundColor = "#1B174E";
         tablinks[i].style.border = "None";
     }
+
     var scan_icon = document.getElementById("scan_icon");
     scan_icon.style.backgroundColor = "#1B174E";
+
+    var history_icon = document.getElementById("history_icon");
+    history_icon.style.backgroundColor = "#1B174E";
 
     // highlight the selected tab with blue
     document.getElementById(tabName).style.display = "block";
@@ -40,39 +50,47 @@ function openTab(evt, tabName) {
     // make sure that the icon is included in this highlight
     if (tabName === 'tab1') {
         scan_icon.style.backgroundColor = "rgba(" + red + ", " + green + ", " + blue + ", " + opacity + ")";
+    } else if (tabName === 'tab2') {
+        history_icon.style.backgroundColor = "rgba(" + red + ", " + green + ", " + blue + ", " + opacity + ")";
     }
 
 }
 
-var scan_icon = document.getElementById("scan_icon");
-scan_icon.addEventListener("click", function() {
-    // treat the icon and the button as the same selection
-    var buttons = document.querySelectorAll("button");
-    var button;
-
-    for (var i = 0; i < buttons.length; i++) {
-        if (buttons[i].textContent === "Scan") {
-            button = buttons[i];
-        }
+function buttonClickHandler(event) {
+    var scanButton = document.getElementById("scan_button");
+    var historyButton = document.getElementById("history_button");
+    if (event.target === scan_icon) {
+        scanButton.click();
+    } else if (event.target === historyIcon) {
+        historyButton.click();
     }
-    button.click();
-});
+};
 
-
-function scanSubmit(label, ipAddress, portLow, portHigh, OS, portFootprint, portOpenList) {
+function scanSubmit(label, ipAddress, portLow, portHigh, OS, portFootprint, portOpenList, formattedTime) {
     var card = document.createElement('div');
     card.className = 'card';
     
     var ch = document.createElement('div');
-    ch.textContent = label + " --- " + ipAddress;
     ch.className = 'card-header';
 
+    var lt = document.createElement('div');
+    lt.textContent = label;
+    lt.className = 'left-text';
+
+    var rt = document.createElement('div');
+    rt.textContent = formattedTime;
+    rt.className = 'right-text';
+
     var cb = document.createElement('div');
-    cb.textContent = 'Open Ports:';
     cb.className = 'card-body';
 
-    var ol = document.createElement('ul');
+    var host = document.createElement('p');
+    host.textContent = 'Hostname: ' + ipAddress;
 
+    var ports = document.createElement('p');
+    ports.textContent = 'Open Ports:';
+
+    var ol = document.createElement('ul');
     portOpenList.forEach(port => {
         const listItem = document.createElement('li');
         listItem.textContent = port;
@@ -86,8 +104,12 @@ function scanSubmit(label, ipAddress, portLow, portHigh, OS, portFootprint, port
     //OS.width = '200'; 
     //OS.height = '200'; 
 
+    ch.appendChild(lt);
+    ch.appendChild(rt);
     card.appendChild(ch);
     card.appendChild(cb);
+    cb.appendChild(host);
+    cb.append(ports)
     cb.append(ol);
     //ch.appendChild(OS);
     
@@ -103,13 +125,24 @@ function scanCollect() {
     const OS = document.getElementById("OS").checked;
     const portFootprint = document.getElementById("port-footprint").checked;
 
+    const scanError = document.getElementById('scanError');
+    scanError.style.display = "none";
+
     const portList = [];
     for (let i = parseInt(portLow); i <= parseInt(portHigh); i++) {
         portList.push(i);
     }
 
+    const currentTime = new Date();
+    const formattedTime = currentTime.toLocaleTimeString('en-US', { timeStyle: 'medium' });
+
     const portPromise = run_check_ports_open(ipAddress, portList);
     portPromise.then((value) => {
-        scanSubmit(label, ipAddress, portLow, portHigh, OS, portFootprint, value);
+        if (value != "error") {
+            eel.write_to_json(label, ipAddress, value, formattedTime);
+            scanSubmit(label, ipAddress, portLow, portHigh, OS, portFootprint, value, formattedTime);
+        } else {
+            scanError.style.display = "block";
+        }
     })
 };

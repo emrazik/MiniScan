@@ -44,6 +44,12 @@ body, html {
     height: 4em;
 }
 
+#history_icon {
+    padding-left: 10%;
+    width: 4em;
+    height: 4em;
+}
+
 .form-group {
     margin: 0 10% 1em 10%;
 }
@@ -64,5 +70,14 @@ label {
     height: 100vh;
     overflow-y: auto;
 }
+
+.left-text {
+    float: left;
+}
+
+.right-text {
+    float: right;
+}
+
 
 
