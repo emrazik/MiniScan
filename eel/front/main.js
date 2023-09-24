@@ -9,6 +9,15 @@ async function run_check_ports_open(host, ports) {
     return portOpenList;
 }
 
+async function init_history() {
+    return await eel.read_from_json()();
+}
+
+const initPromise = init_history();
+initPromise.then((value) => {
+    createHistoryCards(value);
+});
+
 function openTab(evt, tabName) {
     var i, tabcontent, tablinks;
 
@@ -66,7 +75,7 @@ function buttonClickHandler(event) {
     }
 };
 
-function scanSubmit(label, ipAddress, portLow, portHigh, OS, portFootprint, portOpenList, formattedTime) {
+function scanSubmit(label, ipAddress, portLow, portHigh, OS, portFootprint, portOpenList, formattedTime, ui_location) {
     var card = document.createElement('div');
     card.className = 'card';
     
@@ -112,9 +121,14 @@ function scanSubmit(label, ipAddress, portLow, portHigh, OS, portFootprint, port
     cb.append(ports)
     cb.append(ol);
     //ch.appendChild(OS);
-    
-    var cardContainer = document.getElementById('card-container');
-    cardContainer.appendChild(card);
+    if (ui_location === "scan") {
+        var cardContainer = document.getElementById('card-container-scan');
+        cardContainer.appendChild(card);
+    } else if (ui_location === "history") {
+        var cardContainer = document.getElementById('card-container-history');
+        cardContainer.appendChild(card);
+    }
+
 };
 
 function scanCollect() {
@@ -140,9 +154,20 @@ function scanCollect() {
     portPromise.then((value) => {
         if (value != "error") {
             eel.write_to_json(label, ipAddress, value, formattedTime);
-            scanSubmit(label, ipAddress, portLow, portHigh, OS, portFootprint, value, formattedTime);
+            scanSubmit(label, ipAddress, portLow, portHigh, OS, portFootprint, value, formattedTime, "scan");
         } else {
             scanError.style.display = "block";
         }
     })
 };
+
+function createHistoryCards(init_data) {    
+    for (const card of init_data) {
+        let card_data = JSON.parse(card);
+        let label = card_data["label"];
+        let ipAddress = card_data["ipAddress"];
+        let openPorts = card_data["openPorts"];
+        let formattedTime = card_data["ipAddress"];
+        scanSubmit(label, ipAddress, '', '', '', '', openPorts, formattedTime, "history");
+    }
+}
