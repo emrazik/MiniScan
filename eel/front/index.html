@@ -11,7 +11,6 @@
 
     </head>
     <body>
-
         <div class="container-fluid">
             <div class="row justify-content-center">
                 <div class="col-2 text-center sidebar">
@@ -57,7 +56,12 @@
                         </form>
                     </div>
                     <div id="tab2" class="tabcontent">
-                        <div id="card-container-history"></div>
+                        <div class="input-group rounded" style="margin-top: 10px;">
+                            <input type="search" class="form-control rounded" placeholder="Search"/>
+                            <span class="input-group-text border-0" id="search-addon" style="background-color: transparent">
+                                <img id="search_icon" src="icons/search_icon.svg"/>
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <div class="col-8 scrollable-column" style="min-height: 100vh; background-color: #242057;">
@@ -66,6 +70,7 @@
                             <strong>Error:</strong> Something went wrong with your scan. Please check your inputs.
                         </div>
                     </div>
+                    <div id="card-container-history"></div>
                 </div>
             </div>
         </div>

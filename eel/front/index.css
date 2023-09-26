@@ -8,6 +8,13 @@ body, html {
     overflow: hidden;
 }
 
+.openbar {
+    padding: 0;
+    margin: 0;
+    min-height: 100vh;
+    background-color: #242057;
+}
+
 .tablinks {
     width: 100%;
     background-color: #1B174E;
@@ -77,6 +84,16 @@ label {
 
 .right-text {
     float: right;
+}
+
+#card-container-history {
+    display: flex;
+    flex-wrap: wrap
+}
+
+.card {
+    width: calc(33.33% - 20px);
+    margin: 10px;
 }
 
 

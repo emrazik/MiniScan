@@ -57,10 +57,13 @@ function openTab(evt, tabName) {
     tab.style.borderRightStyle = "solid"; 
 
     // make sure that the icon is included in this highlight
+    let historyContent = document.getElementById("card-container-history");
     if (tabName === 'tab1') {
         scan_icon.style.backgroundColor = "rgba(" + red + ", " + green + ", " + blue + ", " + opacity + ")";
+        historyContent.style.display = "none";
     } else if (tabName === 'tab2') {
         history_icon.style.backgroundColor = "rgba(" + red + ", " + green + ", " + blue + ", " + opacity + ")";
+        historyContent.style.display = "flex";
     }
 
 }
