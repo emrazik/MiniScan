@@ -20,3 +20,6 @@ def tcp_check_ports_open_default(host: str, ports: List[int], config: Dict[str, 
         else:
             if config["verbose"]:
                 print("Port {} is closed".format(port))
+
+def tcp_check_port_service(port: int) -> str:
+    return socket.getservbyport(port)

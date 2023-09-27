@@ -1,8 +1,45 @@
 var scanIcon = document.getElementById("scan_icon");
 scanIcon.addEventListener('click', buttonClickHandler);
+scanIcon.click();
 
 var historyIcon = document.getElementById("history_icon");
 historyIcon.addEventListener('click', buttonClickHandler);
+
+// history search function
+const searchInput = document.getElementById('searchInput');
+const cardContainerHistory = document.getElementById('card-container-history');
+const cardContainerScan = document.getElementById('card-container-scan');
+const cardsHistory = cardContainerHistory.getElementsByClassName('card');
+const cardsScan = cardContainerScan.getElementsByClassName('card');
+
+searchInput.addEventListener('input', function () {
+    const searchTermLabel = searchInput.value.toLowerCase();
+
+    // Loop through the historical scans and hide/show based on the search term
+    for (let i = 0; i < cardsHistory.length; i++) {
+        const card = cardsHistory[i];
+        const labelText = card.getElementsByTagName('div').label.innerText.toLowerCase();
+        const dateText = card.getElementsByTagName('div').date.innerText.toLowerCase();
+
+        if (labelText.includes(searchTermLabel) || dateText.includes(searchTermLabel)) {
+            card.style.display = 'flex';
+        } else {
+            card.style.display = 'none';
+        }
+    }
+    // check the newly added cards as well
+    for (let i = 0; i < cardsScan.length; i++) {
+        const card = cardsScan[i];
+        const labelText = card.getElementsByTagName('div').label.innerText.toLowerCase();
+        const dateText = card.getElementsByTagName('div').date.innerText.toLowerCase();
+
+        if (labelText.includes(searchTermLabel) || dateText.includes(searchTermLabel)) {
+            card.style.display = 'flex';
+        } else {
+            card.style.display = 'none';
+        }
+    }
+});
 
 async function run_check_ports_open(host, ports) {
     let portOpenList = await eel.tcp_check_ports_open_default(host, ports)();
@@ -78,7 +115,7 @@ function buttonClickHandler(event) {
     }
 };
 
-function scanSubmit(label, ipAddress, portLow, portHigh, OS, portFootprint, portOpenList, formattedTime, ui_location) {
+function scanSubmit(label, ipAddress, portLow, portHigh, OS, portFootprint, portOpenList, portOpenListServices, formattedTime, ui_location) {
     var card = document.createElement('div');
     card.className = 'card';
     
@@ -88,10 +125,12 @@ function scanSubmit(label, ipAddress, portLow, portHigh, OS, portFootprint, port
     var lt = document.createElement('div');
     lt.textContent = label;
     lt.className = 'left-text';
+    lt.id = 'label';
 
     var rt = document.createElement('div');
     rt.textContent = formattedTime;
     rt.className = 'right-text';
+    rt.id = 'date'
 
     var cb = document.createElement('div');
     cb.className = 'card-body';
@@ -100,14 +139,18 @@ function scanSubmit(label, ipAddress, portLow, portHigh, OS, portFootprint, port
     host.textContent = 'Hostname: ' + ipAddress;
 
     var ports = document.createElement('p');
-    ports.textContent = 'Open Ports:';
+    if (portOpenList.length === 0) {
+        ports.textContent = 'Open Ports: None';
+    } else {
+        ports.textContent = 'Open Ports:';
+        var ol = document.createElement('ul');
+        for (let i = 0; i < portOpenList.length; i++) {
+            const listItem = document.createElement('li');
+            listItem.textContent = portOpenList[i] + ' (' + portOpenListServices[i] + ')';
+            ol.appendChild(listItem);
+        }
+    }
 
-    var ol = document.createElement('ul');
-    portOpenList.forEach(port => {
-        const listItem = document.createElement('li');
-        listItem.textContent = port;
-        ol.appendChild(listItem);
-    });
 
     //var OS = document.createElement('object');
     //OS.data = '/icons/scan_icon.svg';
@@ -121,15 +164,20 @@ function scanSubmit(label, ipAddress, portLow, portHigh, OS, portFootprint, port
     card.appendChild(ch);
     card.appendChild(cb);
     cb.appendChild(host);
-    cb.append(ports)
-    cb.append(ol);
+    cb.append(ports);
+    if (portOpenList.length != 0) {
+        cb.append(ol);
+    }
+    
     //ch.appendChild(OS);
     if (ui_location === "scan") {
         var cardContainer = document.getElementById('card-container-scan');
         cardContainer.appendChild(card);
+        card.classList.add('card-new');
     } else if (ui_location === "history") {
         var cardContainer = document.getElementById('card-container-history');
         cardContainer.appendChild(card);
+        card.classList.add('card-old');
     }
 
 };
@@ -150,14 +198,23 @@ function scanCollect() {
         portList.push(i);
     }
 
+    const options = { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit', 
+        hour12: true 
+    };
     const currentTime = new Date();
-    const formattedTime = currentTime.toLocaleTimeString('en-US', { timeStyle: 'medium' });
+    const formattedTime = currentTime.toLocaleTimeString('en-US', options);
 
     const portPromise = run_check_ports_open(ipAddress, portList);
     portPromise.then((value) => {
         if (value != "error") {
             eel.write_to_json(label, ipAddress, value, formattedTime);
-            scanSubmit(label, ipAddress, portLow, portHigh, OS, portFootprint, value, formattedTime, "scan");
+            scanSubmit(label, ipAddress, portLow, portHigh, OS, portFootprint, value[0], value[1], formattedTime, "scan");
         } else {
             scanError.style.display = "block";
         }
@@ -170,7 +227,7 @@ function createHistoryCards(init_data) {
         let label = card_data["label"];
         let ipAddress = card_data["ipAddress"];
         let openPorts = card_data["openPorts"];
-        let formattedTime = card_data["ipAddress"];
-        scanSubmit(label, ipAddress, '', '', '', '', openPorts, formattedTime, "history");
+        let formattedTime = card_data["time"];
+        scanSubmit(label, ipAddress, '', '', '', '', openPorts[0], openPorts[1], formattedTime, "history");
     }
 }
