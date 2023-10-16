@@ -41,8 +41,13 @@ searchInput.addEventListener('input', function () {
     }
 });
 
-async function run_check_ports_open(host, ports) {
-    let portOpenList = await eel.tcp_check_ports_open_default(host, ports)();
+async function run_check_ports_open(host, ports, synScan) {
+    if (synScan === true) {
+        var portOpenList = await eel.tcp_syn_scan_ports_default(host, ports)();
+    } else {
+        var portOpenList = await eel.tcp_check_ports_open_default(host, ports)();
+    }
+
     return portOpenList;
 }
 
@@ -115,7 +120,7 @@ function buttonClickHandler(event) {
     }
 };
 
-function scanSubmit(label, ipAddress, portLow, portHigh, OS, portFootprint, portOpenList, portOpenListServices, formattedTime, ui_location) {
+function scanSubmit(label, ipAddress, portLow, portHigh, OS, synScan, portOpenList, portOpenListServices, formattedTime, ui_location) {
     var card = document.createElement('div');
     card.className = 'card';
     
@@ -150,7 +155,6 @@ function scanSubmit(label, ipAddress, portLow, portHigh, OS, portFootprint, port
             ol.appendChild(listItem);
         }
     }
-
 
     //var OS = document.createElement('object');
     //OS.data = '/icons/scan_icon.svg';
@@ -188,7 +192,7 @@ function scanCollect() {
     const portLow = document.getElementById("port-range-low").value;
     const portHigh = document.getElementById("port-range-high").value;
     const OS = document.getElementById("OS").checked;
-    const portFootprint = document.getElementById("port-footprint").checked;
+    const synScan = document.getElementById("syn-scan").checked;
 
     const scanError = document.getElementById('scanError');
     scanError.style.display = "none";
@@ -210,11 +214,11 @@ function scanCollect() {
     const currentTime = new Date();
     const formattedTime = currentTime.toLocaleTimeString('en-US', options);
 
-    const portPromise = run_check_ports_open(ipAddress, portList);
+    const portPromise = run_check_ports_open(ipAddress, portList, synScan);
     portPromise.then((value) => {
         if (value != "error") {
             eel.write_to_json(label, ipAddress, value, formattedTime);
-            scanSubmit(label, ipAddress, portLow, portHigh, OS, portFootprint, value[0], value[1], formattedTime, "scan");
+            scanSubmit(label, ipAddress, portLow, portHigh, OS, synScan, value[0], value[1], formattedTime, "scan");
         } else {
             scanError.style.display = "block";
         }

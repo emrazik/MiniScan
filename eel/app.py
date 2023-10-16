@@ -26,6 +26,22 @@ def tcp_check_ports_open_default(host: str, ports: List[int]) -> List[int]:
     return open_port_list, open_port_service_list
 
 @eel.expose
+def tcp_syn_scan_ports_default(host: str, ports: List[int]) -> List[int]:
+    try:
+        socket.gethostbyname(host)
+    except:
+        return "error"
+
+    open_port_list = []
+    open_port_service_list = []
+    for port in ports:
+        if tcp.tcp_syn_scan_port_default(host, port):
+            open_port_list.append(port)
+            open_port_service_list.append(tcp.tcp_check_port_service(port))
+    
+    return open_port_list, open_port_service_list
+
+@eel.expose
 def write_to_json(label: str, ip_address: str, open_ports: List[int], time: str) -> None:
     data = {"label": label, "ipAddress": ip_address, "openPorts": open_ports, "time": time}
 
