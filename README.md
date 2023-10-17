@@ -1,6 +1,8 @@
 # MiniScan
 MiniScan is a small port scanner with a clean and simple GUI. It offers basic TCP scanning, SYN scanning, and a searchable history of scans.
 
+![](https://github.com/emrazik/MiniScan/blob/main/MiniScanExample.gif)
+
 ## Installation
 ### MacOS
 Download the app [here](https://github.com/emrazik/MiniScan/releases)
