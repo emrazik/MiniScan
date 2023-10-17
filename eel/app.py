@@ -3,6 +3,7 @@ import eel
 from typing import List, Dict
 import json
 import socket
+import os
 
 from scan import tcp
 
@@ -43,17 +44,26 @@ def tcp_syn_scan_ports_default(host: str, ports: List[int]) -> List[int]:
 
 @eel.expose
 def write_to_json(label: str, ip_address: str, open_ports: List[int], time: str) -> None:
+    json_file_path = os.path.join(os.path.expanduser('~'), 'MiniScan', 'scan_history.json')
     data = {"label": label, "ipAddress": ip_address, "openPorts": open_ports, "time": time}
 
-    json_file_path = '../storage/scan_history.json'
     json_data = json.dumps(data)
     with open(json_file_path, 'a') as js_file:
         js_file.write(json_data + '\n')
-    
+    js_file.close()
 
 @eel.expose
 def read_from_json():
-    json_file_path = '../storage/scan_history.json'
+    data_dir = os.path.join(os.path.expanduser('~'), 'MiniScan')
+    if not os.path.exists(data_dir):
+        os.mkdir(data_dir)
+
+    json_file_path = os.path.join(data_dir, 'scan_history.json')
+    if not os.path.exists(json_file_path):
+        with open(json_file_path, 'w') as file:
+            file.write('')
+            file.close()
+    
     js_file = open(json_file_path, 'r')
 
     json_lines = js_file.readlines()
